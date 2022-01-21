@@ -1,0 +1,25 @@
+{
+    "name": "sweikenb/console-framework",
+    "description": "Simple framework for creating console applications.",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Simon Schröer",
+            "email": "code@sweikenb.com"
+        }
+    ],
+    "minimum-stability": "stable",
+    "require": {
+        "php": "^8.1",
+        "pimple/pimple": "~3.0",
+        "symfony/console": "^6.0",
+        "symfony/event-dispatcher": "^6.0",
+        "symfony/yaml": "^6.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Sweikenb\\ConsoleFramework\\": "src"
+        }
+    }
+}
