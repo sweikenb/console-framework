@@ -12,5 +12,5 @@ Please have a look at the framework [documentation](./docs/index.md) for more de
 Create your new project by using the template repository:
 
 ```bash
-composer create-project git@github.com:sweikenb/console-framework-standard.git ./my-project-dir
+composer create-project sweikenb/console-framework-standard ./my-project-dir
 ```
