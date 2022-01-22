@@ -1,4 +1,16 @@
-# Framework Structure
+# Index
+
+1. [The Framework Structure](#the-framework-structure)
+2. [Commands](#commands)
+3. [Services](#services)
+    1. [Handling circular dependencies](#handling-circular-dependencies)
+4. [Events](#events)
+    1. [Default Events](#default-events)
+5. [Service Contracts](#service-contracts)
+6. [Application Settings](#application-settings)
+    1. [Configuration Examples](#configuration-examples)
+
+## The Framework Structure
 
 This framework consists of a very few core libraries of the Symfony project
 and [Pimple](https://github.com/silexphp/Pimple) as di-container.
