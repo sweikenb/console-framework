@@ -87,7 +87,7 @@ services:
       - "a static value"
 ```
 
-### Handling circular dependencies
+### Handling Circular Dependencies
 
 If you have circular dependencies, you can use a callback to inject these:
 
@@ -152,7 +152,16 @@ contracts:
 
   "App\\Api\\BarFeatureInterface":
     class: "App\\Service\\BarFeatureImplementation"
+    arguments:
+      - "overwrite Arg 1"
+      - "overwrite Arg 2"
+    calls:
+      - { method: "setService", arguments: [ "@some.service" ] }
 ```
+
+If your implementation requires different arguments than the default defined in the `services.yaml` file, you can
+overwrite them as you can see in the example above _(this also applies
+to [circular dependencies](#handling-circular-dependencies))_.
 
 ## Application Settings
 
