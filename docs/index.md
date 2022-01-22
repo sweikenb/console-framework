@@ -168,7 +168,8 @@ to [circular dependencies](#handling-circular-dependencies))_.
 You can provide a YAML-file with settings specific to your application. By default, the template-project looks for an
 ENV variable (`APP_SETTINGS`) containing a path to the settings file. If this variable is not present or empty, it will
 look for a `settings.yaml` or `settings.yaml.dist` file in your project root. You can modify this behavior in
-the `App\SettingsResolver…` of the template-project.
+the `App\SettingsResolver` of the template-project which extends the default one provided by the
+framework `Sweikenb\ConsoleFramework\Resolver\AbstractSettingsResolver`.
 
 ```bash
 # Specify a settings file:
