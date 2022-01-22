@@ -46,8 +46,7 @@ class ConsoleKernel
                 )
             );
         }
-        finally {
-            exit($exitCode);
-        }
+
+        exit($exitCode);
     }
 }
