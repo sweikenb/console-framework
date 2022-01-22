@@ -4,10 +4,10 @@ Simple framework for creating console applications.
 
 License: **MIT**
 
-Please have a look at our framework [documentation](./docs/index.md) for more details.
+Please have a look at the framework [documentation](./docs/index.md) for more details.
 
 
-# Getting Started
+# Creating a new project
 
 Create your new project by using the template repository:
 
