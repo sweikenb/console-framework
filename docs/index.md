@@ -87,7 +87,7 @@ services:
       - "a static value"
 ```
 
-### Handling circular dependencies
+### Handling Circular Dependencies
 
 If you have circular dependencies, you can use a callback to inject these:
 
@@ -152,14 +152,24 @@ contracts:
 
   "App\\Api\\BarFeatureInterface":
     class: "App\\Service\\BarFeatureImplementation"
+    arguments:
+      - "overwrite Arg 1"
+      - "overwrite Arg 2"
+    calls:
+      - { method: "setService", arguments: [ "@some.service" ] }
 ```
+
+If your implementation requires different arguments than the default defined in the `services.yaml` file, you can
+overwrite them as you can see in the example above _(this also applies
+to [circular dependencies](#handling-circular-dependencies))_.
 
 ## Application Settings
 
 You can provide a YAML-file with settings specific to your application. By default, the template-project looks for an
 ENV variable (`APP_SETTINGS`) containing a path to the settings file. If this variable is not present or empty, it will
 look for a `settings.yaml` or `settings.yaml.dist` file in your project root. You can modify this behavior in
-the `App\SettingsResolver…` of the template-project.
+the `App\SettingsResolver` of the template-project which extends the default one provided by the
+framework `Sweikenb\ConsoleFramework\Resolver\AbstractSettingsResolver`.
 
 ```bash
 # Specify a settings file:

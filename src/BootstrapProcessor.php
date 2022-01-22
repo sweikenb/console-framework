@@ -16,6 +16,7 @@ class BootstrapProcessor
 {
     private array $contracts = [];
     private array $contractArgs = [];
+    private array $contractCalls = [];
 
     public function __construct(
         private Container $container,
@@ -154,6 +155,9 @@ class BootstrapProcessor
             if (isset($contractConfig['arguments'])) {
                 $this->contractArgs[$interface] = $contractConfig['arguments'];
             }
+            if (isset($contractConfig['calls'])) {
+                $this->contractCalls[$interface] = $contractConfig['calls'];
+            }
         }
     }
 
@@ -173,10 +177,13 @@ class BootstrapProcessor
                 // resolve contracts if needed
                 $class = $serviceConfig['class'];
                 if (isset($this->contracts[$class])) {
-                    $class = $this->contracts[$class];
                     if (isset($this->contractArgs[$class])) {
                         $serviceConfig['arguments'] = $this->contractArgs[$class];
                     }
+                    if (isset($this->contractCalls[$class])) {
+                        $serviceConfig['calls'] = $this->contractCalls[$class];
+                    }
+                    $class = $this->contracts[$class];
                 }
 
                 // prepare service args
@@ -230,14 +237,6 @@ class BootstrapProcessor
 
         // process service definitions
         foreach ($commands as $commandClass => $commandArgs) {
-
-            // resolve contracts if needed
-            if (isset($contracts[$commandClass])) {
-                $commandClass = $contracts[$commandClass];
-                if (isset($this->contractArgs[$commandClass])) {
-                    $commandArgs = $this->contractArgs[$commandClass];
-                }
-            }
 
             // prepare command args
             $arguments = $this->resolveDiArguments($commandArgs ?? [], $this->container);
