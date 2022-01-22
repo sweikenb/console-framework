@@ -41,7 +41,7 @@ class ConsoleKernel
             $exitCode = 1;
             $output->getErrorOutput()->writeln(
                 sprintf(
-                    "Boostrap Error: %s (%s:%s)", $e->getMessage(),
+                    "Bootstrap Error: %s (%s:%s)", $e->getMessage(),
                     $e->getFile(), $e->getLine()
                 )
             );

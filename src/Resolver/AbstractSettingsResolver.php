@@ -4,22 +4,27 @@ namespace Sweikenb\ConsoleFramework\Resolver;
 
 abstract class AbstractSettingsResolver
 {
-    const ENV_SETTINGS_FILEPATH = 'APP_SETTINGS';
-
-    const CHECK_PATHS = [
-        '/settings.yaml',
-        '/settings.yaml.dist',
-    ];
-
-    public static function getFilepath(string $projectRoot): ?string
+    protected function getEnvSettingsVar(): string
     {
-        $filepath = getenv(self::ENV_SETTINGS_FILEPATH) ?: null;
+        return 'APP_SETTINGS';
+    }
+
+    protected function getPathsToCheck(string $projectRoot): array
+    {
+        return [
+            $projectRoot . '/settings.yaml',
+            $projectRoot . '/settings.yaml.dist',
+        ];
+    }
+
+    public function getFilepath(string $projectRoot): ?string
+    {
+        $filepath = getenv($this->getEnvSettingsVar()) ?: null;
         if ($filepath) {
             return $filepath;
         }
 
-        foreach (self::CHECK_PATHS as $filepath) {
-            $filepath = $projectRoot . $filepath;
+        foreach ($this->getPathsToCheck($projectRoot) as $filepath) {
             if (file_exists($filepath)) {
                 return $filepath;
             }

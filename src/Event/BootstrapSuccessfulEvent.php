@@ -6,5 +6,5 @@ use Symfony\Contracts\EventDispatcher\Event;
 
 class BootstrapSuccessfulEvent extends Event
 {
-    const EVENT_NAME = 'boostrap.successful';
+    const EVENT_NAME = 'bootstrap.successful';
 }
