@@ -132,13 +132,13 @@ the [component documentation](https://symfony.com/doc/current/components/event_d
 
 ### Default Events
 
-| Event Name          | Description                                                                                                 |
-|---------------------|-------------------------------------------------------------------------------------------------------------|
-| boostrap.successful | This event gets populated when the framework bootstrapping has finished without errors.                     |
-| console.command     | [details](https://symfony.com/doc/current/components/console/events.html#the-consoleevents-command-event)   |
-| console.signal      | [details](https://symfony.com/doc/current/components/console/events.html#the-consoleevents-signal-event)    |
-| console.terminate   | [details](https://symfony.com/doc/current/components/console/events.html#the-consoleevents-terminate-event) |
-| console.error       | [details](https://symfony.com/doc/current/components/console/events.html#the-consoleevents-error-event)     |
+| Event Name           | Description                                                                                                 |
+|----------------------|-------------------------------------------------------------------------------------------------------------|
+| bootstrap.successful | This event gets populated when the framework bootstrapping has finished without errors.                     |
+| console.command      | [details](https://symfony.com/doc/current/components/console/events.html#the-consoleevents-command-event)   |
+| console.signal       | [details](https://symfony.com/doc/current/components/console/events.html#the-consoleevents-signal-event)    |
+| console.terminate    | [details](https://symfony.com/doc/current/components/console/events.html#the-consoleevents-terminate-event) |
+| console.error        | [details](https://symfony.com/doc/current/components/console/events.html#the-consoleevents-error-event)     |
 
 ## Service Contracts
 
