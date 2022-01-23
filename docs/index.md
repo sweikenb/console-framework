@@ -9,6 +9,7 @@
 5. [Service Contracts](#service-contracts)
 6. [Application Settings](#application-settings)
     1. [Configuration Examples](#configuration-examples)
+7. [Application Bundling (.phar)](#application-bundling)
 
 ## The Framework Structure
 
@@ -217,3 +218,23 @@ These settings will for example create the following injectable parameters:
 
 * You can nest these settings infinitely deep _(you know: with great power...)_
 * Array nodes will always be injected as arrays
+
+# Application Bundling
+
+Please note that you have to enable the phar-extension of PHP and also need to set this in your `php.ini`:
+
+```ini
+phar.readonly = 0
+```
+
+If you are using the suhosin extension, please also whitelist the phar extension:
+
+```ini
+suhosin.executor.include.whitelist = "phar"
+```
+
+## Create the executable
+
+```bash
+php bin/console core:compile "my-application.phar" --executable
+```
