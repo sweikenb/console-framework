@@ -2,6 +2,7 @@
 
 namespace Sweikenb\ConsoleFramework;
 
+use Sweikenb\ConsoleFramework\Core\Framework\Defaults;
 use Sweikenb\ConsoleFramework\Event\BootstrapSuccessfulEvent;
 use Sweikenb\ConsoleFramework\Exception\BootstrapException;
 use Pimple\Container;
@@ -30,9 +31,6 @@ class BootstrapProcessor
      */
     public function execute(?string $settingsFile = null): void
     {
-        // prepare event dispatcher
-        $eventDispatcher = $this->prepareEvents();
-
         // prepare application settings
         $this->prepareSettings($settingsFile);
 
@@ -41,6 +39,9 @@ class BootstrapProcessor
         $this->prepareServices();
         $this->prepareCommands();
 
+        // prepare event dispatcher
+        $eventDispatcher = $this->prepareEvents();
+
         // bootstrapping done
         $successEvent = new BootstrapSuccessfulEvent();
         $eventDispatcher->dispatch($successEvent, BootstrapSuccessfulEvent::EVENT_NAME);
@@ -48,7 +49,7 @@ class BootstrapProcessor
 
     private function prepareEvents(): EventDispatcher
     {
-        // prepare the event dispatcher as first service
+        // prepare the event dispatcher as service
         $eventDispatcher = new EventDispatcher();
         $this->container['event.dispatcher'] = function () use ($eventDispatcher) {
             return $eventDispatcher;
@@ -56,7 +57,11 @@ class BootstrapProcessor
 
         // parse event listener definitions
         $eventsData = Yaml::parseFile(sprintf("%s/events.yml", $this->appConfigDir));
-        $definitions = $eventsData['events'] ?? [];
+
+        // merge with core listeners
+        $definitions = array_merge(Defaults::getCoreEventListeners(), $eventsData['events'] ?? []);
+
+        // process event listener definitions
         foreach ($definitions as $eventName => $listeners) {
             foreach ($listeners as $config) {
 
@@ -147,7 +152,9 @@ class BootstrapProcessor
 
         // parse file
         $contractData = Yaml::parseFile($filePath);
-        $serviceContracts = $contractData['contracts'] ?? [];
+
+        // merge with core contracts
+        $serviceContracts = array_merge(Defaults::getCoreContracts(), $contractData['contracts'] ?? []);
 
         // process contracts
         foreach ($serviceContracts as $interface => $contractConfig) {
@@ -168,7 +175,9 @@ class BootstrapProcessor
 
         // parse file
         $serviceData = Yaml::parseFile($servicesFile);
-        $serviceDefinitions = $serviceData['services'] ?? [];
+
+        // merge with core services
+        $serviceDefinitions = array_merge(Defaults::getCoreServices(), $serviceData['services'] ?? []);
 
         // process service definitions
         foreach ($serviceDefinitions as $serviceId => $serviceConfig) {
@@ -233,7 +242,9 @@ class BootstrapProcessor
 
         // parse file
         $commandData = Yaml::parseFile($filePath);
-        $commands = $commandData['commands'] ?? [];;
+
+        // merge with core commands
+        $commands = array_merge(Defaults::getCoreCommands(), $commandData['commands'] ?? []);
 
         // process service definitions
         foreach ($commands as $commandClass => $commandArgs) {

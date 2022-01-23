@@ -17,6 +17,9 @@
         "symfony/event-dispatcher": "^6.0",
         "symfony/yaml": "^6.0"
     },
+    "suggest": {
+        "ext-phar": "In order to use the integrated compile command, you must install and enable the PHAR extension."
+    },
     "autoload": {
         "psr-4": {
             "Sweikenb\\ConsoleFramework\\": "src"
