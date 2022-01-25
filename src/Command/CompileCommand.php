@@ -12,11 +12,18 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class CompileCommand extends Command
 {
+    const DEFAULT_EXCLUDE_PATHS = ['vendor/bin'];
+    const DEFAULT_SKIP_NAMES = ['.idea', '.git'];
+
     const CMD_NAME = 'core:compile';
 
     const ARG_NAME = 'name';
 
     const OPT_EXECUTABLE = 'executable';
+    const OPT_EXCLUDE = 'exclude';
+    const OPT_EXCLUDE_FILE = 'exclude-file';
+    const OPT_SKIP = 'skip';
+    const OPT_SKIP_FILE = 'skip-file';
 
     protected function configure(): void
     {
@@ -26,7 +33,12 @@ class CompileCommand extends Command
         $this->addArgument(self::ARG_NAME, InputArgument::OPTIONAL, 'Name of the executable.', 'app.phar');
 
         $this->addOption(self::OPT_EXECUTABLE, 'x', InputOption::VALUE_NONE, 'Make the PHAR file executable.');
-        $this->addOption(self::OPT_EXECUTABLE, 'x', InputOption::VALUE_NONE, 'Make the PHAR file executable.');
+
+        $this->addOption(self::OPT_EXCLUDE, null, InputOption::VALUE_IS_ARRAY | InputOption::VALUE_REQUIRED, 'Filepath to exclude (absolute or relative to project root)');
+        $this->addOption(self::OPT_EXCLUDE_FILE, null, InputOption::VALUE_REQUIRED, 'File of paths to exclude, one exclude-path per line');
+
+        $this->addOption(self::OPT_SKIP, null, InputOption::VALUE_IS_ARRAY | InputOption::VALUE_REQUIRED, 'Folder- or filename to skipp (absolute or relative to project root)');
+        $this->addOption(self::OPT_SKIP_FILE, null, InputOption::VALUE_REQUIRED, 'File of folder- or filename to skipp, one skip-path per line');
     }
 
     /**
@@ -44,8 +56,8 @@ class CompileCommand extends Command
             throw new CompilerException('The application name must contain the ".phar" file extension!');
         }
 
-        $ignoredPaths = [];
-        $ignoredFileNames = ['.idea', '.git'];
+        $excludedPaths = $this->processExcludePaths($input);
+        $skippedNames = $this->processSkipNames($input);
 
         $sourceDir = realpath($_SERVER['PWD']);
         $targetDir = $sourceDir . DIRECTORY_SEPARATOR . 'build';
@@ -56,7 +68,7 @@ class CompileCommand extends Command
         $builder = new Builder($output, $pharName, $sourceDir, $targetDir, true);
         $builder
             ->removeOldBuild()
-            ->build($_SERVER['SCRIPT_FILENAME'], $ignoredPaths, $ignoredFileNames);
+            ->build($_SERVER['SCRIPT_FILENAME'], $excludedPaths, $skippedNames);
 
         if ($input->getOption(self::OPT_EXECUTABLE)) {
             $builder->makeExecutable();
@@ -66,7 +78,6 @@ class CompileCommand extends Command
     }
 
     /**
-     * @return void
      * @throws \Sweikenb\ConsoleFramework\Exception\CompilerException
      */
     private function checkPhpDependencies(): void
@@ -82,5 +93,74 @@ class CompileCommand extends Command
                 );
             }
         }
+    }
+
+    /**
+     * @throws \Sweikenb\ConsoleFramework\Exception\CompilerException
+     */
+    private function processExcludePaths(InputInterface $input): array
+    {
+        $excludePaths = $input->getOption(self::OPT_EXCLUDE);
+        $excludeFile = $input->getOption(self::OPT_EXCLUDE_FILE);
+
+        // fallback to defaults?
+        if (empty($excludePaths) && empty($excludeFile)) {
+            return self::DEFAULT_EXCLUDE_PATHS;
+        }
+
+        // process exclude file
+        if ($excludeFile) {
+            if (!file_exists($excludeFile) || is_dir($excludeFile)) {
+                throw new CompilerException('Invalid exclude file provided.');
+            }
+            $excludePaths = array_merge(file($excludeFile), $excludePaths);
+        }
+
+        // process single paths provided
+        $processed = [];
+        foreach ($excludePaths as $excludePath) {
+            $excludePath = trim($excludePath);
+            if (!empty($excludePath)) {
+                $excludePath = realpath($excludePath);
+                if ($excludePath) {
+                    $processed[] = $excludePath;
+                }
+            }
+        }
+
+        return $processed;
+    }
+
+    /**
+     * @throws \Sweikenb\ConsoleFramework\Exception\CompilerException
+     */
+    private function processSkipNames(InputInterface $input): array
+    {
+        $skipNames = $input->getOption(self::OPT_SKIP);
+        $skipFile = $input->getOption(self::OPT_SKIP_FILE);
+
+        // fallback to defaults?
+        if (empty($skipNames) && empty($skipFile)) {
+            return self::DEFAULT_SKIP_NAMES;
+        }
+
+        // process skip file
+        if ($skipFile) {
+            if (!file_exists($skipFile) || is_dir($skipFile)) {
+                throw new CompilerException('Invalid skip file provided.');
+            }
+            $skipNames = array_merge(file($skipFile), $skipNames);
+        }
+
+        // process single names provided
+        $processed = [];
+        foreach ($skipNames as $skippName) {
+            $skippName = trim($skippName);
+            if (!empty($skippName)) {
+                $processed[] = $skippName;
+            }
+        }
+
+        return $processed;
     }
 }
