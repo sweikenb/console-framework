@@ -2,6 +2,7 @@
 
 1. [Event Definition](#event-definition)
 2. [Default Events](#default-events)
+3. [Process Manager Events](#process-manager-events)
 
 ## Event Definition
 
@@ -36,3 +37,10 @@ the [component documentation](https://symfony.com/doc/current/components/event_d
 | console.signal       | [details](https://symfony.com/doc/current/components/console/events.html#the-consoleevents-signal-event)    |
 | console.terminate    | [details](https://symfony.com/doc/current/components/console/events.html#the-consoleevents-terminate-event) |
 | console.error        | [details](https://symfony.com/doc/current/components/console/events.html#the-consoleevents-error-event)     |
+
+## Process Manager Events
+
+In case you have installed the `sweikenb/pcntl` library, you also have access to its related events.
+
+For more details and a full list of additional event, please visit
+the [library documentation](https://github.com/sweikenb/pcntl#event-dispatcher-support).

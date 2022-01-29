@@ -18,7 +18,8 @@
         "symfony/yaml": "^6.0"
     },
     "suggest": {
-        "ext-phar": "In order to use the integrated compile command, you must install and enable the PHAR extension."
+        "ext-phar": "In order to use the integrated compile command, you must install and enable the PHAR extension.",
+        "sweikenb/pcntl": "Install the sweikenb/pcntl library so you can use process forking in your application."
     },
     "autoload": {
         "psr-4": {
