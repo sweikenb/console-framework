@@ -51,7 +51,7 @@ class BootstrapProcessor
     {
         // prepare the event dispatcher as service
         $eventDispatcher = new EventDispatcher();
-        $this->container['event.dispatcher'] = function () use ($eventDispatcher) {
+        $this->container[Defaults::SERVICE_EVENT_DISPATCHER] = function () use ($eventDispatcher) {
             return $eventDispatcher;
         };
 

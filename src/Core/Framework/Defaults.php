@@ -4,17 +4,36 @@ namespace Sweikenb\ConsoleFramework\Core\Framework;
 
 use Phar;
 use Sweikenb\ConsoleFramework\Command\CompileCommand;
+use Sweikenb\Library\Pcntl\Api\ProcessManagerInterface;
+use Sweikenb\Library\Pcntl\ProcessManager;
 
 final class Defaults
 {
+    const SERVICE_PROCESS_MANAGER = 'process.manager';
+    const SERVICE_EVENT_DISPATCHER = 'event.dispatcher';
+
     public static function getCoreContracts(): array
     {
-        return [];
+        $contracts = [];
+
+        // PCNTL process manager available?
+        if (class_exists(ProcessManager::class)) {
+            $contracts[ProcessManagerInterface::class] = ['class' => ProcessManager::class];
+        }
+
+        return $contracts;
     }
 
     public static function getCoreServices(): array
     {
-        return [];
+        $services = [];
+
+        // PCNTL process manager available?
+        if (class_exists(ProcessManager::class)) {
+            $services[self::SERVICE_PROCESS_MANAGER] = ['class' => ProcessManagerInterface::class];
+        }
+
+        return $services;
     }
 
     public static function getCoreCommands(): array
