@@ -89,7 +89,7 @@ class BootstrapProcessor
 
                     // invoke callback if method possible
                     if (is_object($listener) && method_exists($listener, $method)) {
-                        call_user_func([$listener, $method], $args);
+                        call_user_func_array([$listener, $method], $args);
                     }
                     else {
                         throw new RuntimeException(
