@@ -23,7 +23,8 @@ class BootstrapProcessor
         private Container $container,
         private Application $application,
         private string $appConfigDir
-    ) {}
+    ) {
+    }
 
     /**
      * @throws \ReflectionException
@@ -34,27 +35,32 @@ class BootstrapProcessor
         // prepare application settings
         $this->prepareSettings($settingsFile);
 
+        // init the core event-dispatcher as first service
+        $eventDispatcher = $this->prepareCoreEventDispatcher();
+
         // prepare container definitions
         $this->prepareServiceContracts();
         $this->prepareServices();
         $this->prepareCommands();
-
-        // prepare event dispatcher
-        $eventDispatcher = $this->prepareEvents();
+        $this->prepareEvents($eventDispatcher);
 
         // bootstrapping done
         $successEvent = new BootstrapSuccessfulEvent();
         $eventDispatcher->dispatch($successEvent, BootstrapSuccessfulEvent::EVENT_NAME);
     }
 
-    private function prepareEvents(): EventDispatcher
+    private function prepareCoreEventDispatcher(): EventDispatcher
     {
         // prepare the event dispatcher as service
         $eventDispatcher = new EventDispatcher();
         $this->container[Defaults::SERVICE_EVENT_DISPATCHER] = function () use ($eventDispatcher) {
             return $eventDispatcher;
         };
+        return $eventDispatcher;
+    }
 
+    private function prepareEvents(EventDispatcher $eventDispatcher): void
+    {
         // parse event listener definitions
         $eventsData = Yaml::parseFile(sprintf("%s/events.yml", $this->appConfigDir));
 
@@ -101,8 +107,6 @@ class BootstrapProcessor
 
         // inject dispatcher to console app, so it can also dispatch its events
         $this->application->setDispatcher($eventDispatcher);
-
-        return $eventDispatcher;
     }
 
     private function resolveDiArguments(array $arguments, Container $parsedContainer): array
@@ -211,7 +215,8 @@ class BootstrapProcessor
                         throw new BootstrapException(
                             sprintf(
                                 'Can not call method "%s" for service "%s". Method does not exist!',
-                                $callConfig['method'], $serviceId
+                                $callConfig['method'],
+                                $serviceId
                             )
                         );
                     }
@@ -257,7 +262,8 @@ class BootstrapProcessor
             if (!$reflector->isSubclassOf(Command::class)) {
                 throw new BootstrapException(
                     sprintf(
-                        'Can not register invalid command (%s). Please extend the Symfony base command.', $commandClass
+                        'Can not register invalid command (%s). Please extend the Symfony base command.',
+                        $commandClass
                     )
                 );
             }
