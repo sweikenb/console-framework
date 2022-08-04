@@ -15,10 +15,21 @@ define the events you want to listen to in the corresponding YAML-file:
 events:
 
   foo.event:
-    - [ listener: "@foo.listener.service" ]
+    - { listener: "@foo.listener.service" }
 
   bar.event:
-    - [ listener: "@bar.listener.service", method: "customMethod", priority: 42 ]
+    - { listener: "@bar.listener.service", method: "customMethod", priority: 42 }
+```
+
+The event dispatcher is available for injection by using `event.dispatcher` as service name for reference:
+
+```yaml
+# app/services.yml
+services:
+  my.service:
+    class: My\ServiceClass
+    arguments:
+      - "@event.dispatcher"
 ```
 
 By default, the framework will look for the `handleEvent`-method in the specified listener. If you prefer to use a
