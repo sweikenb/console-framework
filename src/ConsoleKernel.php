@@ -7,42 +7,52 @@ use Exception;
 use Pimple\Container;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Input\ArgvInput;
+use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\ConsoleOutput;
+use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Style\SymfonyStyle;
 
 class ConsoleKernel
 {
-    private Container $container;
-    private Application $application;
+    protected readonly Container $container;
+    protected readonly Application $application;
 
     public function __construct(
-        private string $appName,
-        private string $appVersion,
-        private string $configDir,
-        private ?string $settingsFile = null
+        private readonly string $appName,
+        private readonly string $appVersion,
+        private readonly string $configDir,
+        private readonly ?string $settingsFile = null
     ) {
         $this->container = new Container(['version' => $this->appVersion]);
         $this->application = new Application($this->appName, $this->appVersion);
     }
 
-    public function handle(): never
+    public function configure(SymfonyStyle $io, InputInterface $input, OutputInterface $output): void
     {
         $this->application->setCatchExceptions(true);
         $this->application->setAutoExit(false);
+    }
 
+    public function handle(): never
+    {
         $input = new ArgvInput();
         $output = new ConsoleOutput();
+        $io = new SymfonyStyle($input, $output);
+
+        $this->configure($io, $input, $output);
 
         try {
             $bootstrap = new BootstrapProcessor($this->container, $this->application, $this->configDir);
             $bootstrap->execute($this->settingsFile);
             $exitCode = $this->application->run($input, $output);
-        }
-        catch (Exception $e) {
+        } catch (Exception $e) {
             $exitCode = 1;
             $output->getErrorOutput()->writeln(
                 sprintf(
-                    "Bootstrap Error: %s (%s:%s)", $e->getMessage(),
-                    $e->getFile(), $e->getLine()
+                    "Bootstrap Error: %s (%s:%s)",
+                    $e->getMessage(),
+                    $e->getFile(),
+                    $e->getLine()
                 )
             );
         }
